@@ -1,0 +1,31 @@
+# Ballerina compiler artifacts
+target/
+generated/
+Config.toml
+Dependencies.toml
+
+# Build binaries and native objects
+bin/
+*.o
+*.a
+*.so
+*.dylib
+build/
+
+# Runtime persistence and log artifacts
+*.wal
+*.snap
+*.log
+data/
+storage_data/
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+
+# OS artifacts
+.DS_Store
