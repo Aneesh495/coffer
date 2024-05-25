@@ -5,6 +5,7 @@ import ballerina/test;
 import aneeshkrishna/coffer.fixedpoint;
 import aneeshkrishna/coffer.types;
 import aneeshkrishna/coffer.routing;
+import aneeshkrishna/coffer.risk;
 
 # Regression test for Bug #1: Fixed-point decimal formatting truncation error.
 # Prior to fix, casting a fractional decimal quotient to int rounded instead of truncating
@@ -66,4 +67,23 @@ function testRegressionBugInternalRailEligibility() returns error? {
 
     types:RoutingDecision dec = check router.route(intent);
     test:assertNotEquals(dec.chosenRail, types:INTERNAL, "Interbank cross-institution transfer must never select INTERNAL rail");
+}
+
+# Regression test for Bug #3: Substring containment false positive in sanctions screening.
+# Prior to fix, searching for clean names like 'Alice' matched blocked entities like 'VIKTOR MALICE DRUG CARTEL'
+# because 'MALICE' ends with 'ALICE'. Fixed by requiring whole-phrase or token-boundary matching.
+#
+# + return - Optional error on assertion failure
+@test:Config {}
+function testRegressionBugSanctionsSubstringFalsePositive() returns error? {
+    risk:SanctionsFilter filter = new ();
+
+    // Clean common names that would have matched substring 'ALICE' in 'VIKTOR MALICE DRUG CARTEL'
+    test:assertEquals(filter.screenName("Alice Smith"), ());
+    test:assertEquals(filter.screenName("Alice Cooper"), ());
+    test:assertEquals(filter.screenName("Alice"), ());
+
+    // True sanctioned match should still match
+    var matchRes = filter.screenName("Viktor Malice Drug Cartel");
+    test:assertTrue(matchRes is risk:SanctionEntry);
 }
