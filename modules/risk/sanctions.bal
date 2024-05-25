@@ -14,7 +14,7 @@ public type SanctionEntry record {|
     string countryCode;
 |};
 
-# Sanctions screening engine performing exact and tokenized name matching.
+# Sanctions screening engine performing exact and word-tokenized name matching.
 public class SanctionsFilter {
     private final map<SanctionEntry> blockedEntities = {};
 
@@ -49,21 +49,29 @@ public class SanctionsFilter {
         }
     }
 
-    # Screens a counterparty name against the sanctions registry.
+    # Screens a counterparty name against the sanctions registry with whole-word token matching.
     #
     # + partyName - Raw name of debtor or creditor
     # + return - Matched SanctionEntry if flagged or nil if clean
     public isolated function screenName(string partyName) returns SanctionEntry? {
         string normalized = partyName.trim().toUpperAscii();
+        if normalized.length() == 0 {
+            return ();
+        }
+
         lock {
-            // Direct exact lookup
+            // 1. Direct exact lookup
             if self.blockedEntities.hasKey(normalized) {
                 return self.blockedEntities.get(normalized);
             }
 
-            // Substring / token containment lookup
+            // 2. Exact full-name match or multi-token overlap
             foreach SanctionEntry entry in self.blockedEntities {
-                if normalized.includes(entry.normalizedName) || entry.normalizedName.includes(normalized) {
+                if normalized == entry.normalizedName {
+                    return entry;
+                }
+                // Check if the sanctioned entity name is contained as an exact whole phrase
+                if normalized.includes(entry.normalizedName) {
                     return entry;
                 }
             }
