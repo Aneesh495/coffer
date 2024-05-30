@@ -1,10 +1,26 @@
-# Returns the string `Hello` with the input string name.
-#
-# + name - name as a string or nil
-# + return - "Hello, " with the input string name
-public function hello(string? name) returns string {
-    if name !is () {
-        return string `Hello, ${name}`;
+// Copyright (c) 2026 Aneesh Krishna
+// Licensed under the MIT License. See LICENSE for details.
+
+# Storage engine combining WAL durability, snapshot compaction, and Merkle audit trails.
+public class StorageEngine {
+    private final WalManager wal = new ();
+    private final SnapshotManager snapshots = new ();
+
+    # Initializes storage engine.
+    public isolated function init() {
     }
-    return "Hello, World!";
+
+    # Retrieves Write-Ahead Log manager.
+    #
+    # + return - WalManager reference
+    public isolated function getWalManager() returns WalManager {
+        return self.wal;
+    }
+
+    # Retrieves snapshot manager.
+    #
+    # + return - SnapshotManager reference
+    public isolated function getSnapshotManager() returns SnapshotManager {
+        return self.snapshots;
+    }
 }
