@@ -13,7 +13,7 @@ public class LedgerEngine {
     private final types:JournalBatch[] journal = [];
 
     # Initializes an empty double-entry ledger.
-    public function init() {
+    public isolated function init() {
     }
 
     # Registers a new account into the chart of accounts.

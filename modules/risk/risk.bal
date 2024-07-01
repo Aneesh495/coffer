@@ -11,7 +11,7 @@ public class RiskEngine {
     private final map<AccountVelocityTracker> velocityTrackers = {};
 
     # Initializes risk engine with default rule thresholds.
-    public function init() {
+    public isolated function init() {
     }
 
     # Assesses a transfer intent against real-time fraud rules and sanctions.

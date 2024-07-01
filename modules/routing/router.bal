@@ -8,7 +8,7 @@ public class PaymentRouter {
     private final map<types:RailHealth> registry = {};
 
     # Initializes router with standard production rails.
-    public function init() {
+    public isolated function init() {
         self.registerRail(createDefaultRailHealth(types:FEDNOW));
         self.registerRail(createDefaultRailHealth(types:SEPA_INSTANT));
         self.registerRail(createDefaultRailHealth(types:RTP));
