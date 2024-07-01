@@ -35,7 +35,7 @@ build-c:
 		echo "Archived $(BIN_DIR)/libcoffer_accel.a successfully."; \
 	fi
 	@if [ -d "$(C_SRC_DIR)/bench" ]; then \
-		$(CC) $(CFLAGS) $(C_SRC_DIR)/bench/coffer_bench.c $(C_SRC_DIR)/bench/hdr_histogram.c -o $(BIN_DIR)/coffer-bench -lpthread; \
+		$(CC) $(CFLAGS) $(C_SRC_DIR)/bench/coffer_bench.c $(C_SRC_DIR)/bench/hdr_histogram.c $(BIN_DIR)/libcoffer_accel.a -o $(BIN_DIR)/coffer-bench -lpthread; \
 		echo "Compiled $(BIN_DIR)/coffer-bench successfully."; \
 	fi
 
