@@ -69,6 +69,19 @@ public class QuarantineStore {
         }
     }
 
+    # Retrieves a quarantined item by transaction ID.
+    #
+    # + transactionId - Transaction UUID
+    # + return - QuarantinedItem or nil if not present
+    public isolated function get(string transactionId) returns QuarantinedItem? {
+        lock {
+            if self.items.hasKey(transactionId) {
+                return self.items.get(transactionId);
+            }
+            return ();
+        }
+    }
+
     # Retrieves all items currently in quarantine.
     #
     # + return - Array of QuarantinedItem records
