@@ -1,0 +1,53 @@
+# Coffer Distributed Payment Orchestration Engine Configuration Template
+# Copy to coffer.conf or Config.toml to override default runtime behavior.
+
+[server]
+# Network interfaces and port bindings
+host = "127.0.0.1"
+gateway_port = 8990
+websocket_port = 8991
+admin_port = 8992
+read_timeout_seconds = 15
+write_timeout_seconds = 15
+
+[storage]
+# Append-only Write-Ahead Log and snapshot durability directory
+wal_directory = "data/wal"
+wal_filename = "coffer.wal"
+snapshot_interval_transactions = 10000
+snapshot_directory = "data/snapshots"
+checksum_algorithm = "CRC32"
+audit_tree_algorithm = "SHA-256"
+
+[ledger]
+# Accounting invariants and base denominations
+base_currency = "USD"
+enforce_strict_zero_sum = true
+escrow_hold_ttl_seconds = 300
+max_transaction_minor_units = 100000000000
+
+[routing]
+# Smart routing, SLA parameters, and circuit breaker heuristics
+default_failover_enabled = true
+circuit_trip_failure_threshold = 5
+circuit_cooldown_milliseconds = 30000
+fednow_priority = 1
+sepa_instant_priority = 1
+rtp_priority = 2
+ach_priority = 3
+swift_priority = 4
+
+[risk]
+# Real-time velocity tracking, fraud scoring, and compliance
+sanctions_screening_enabled = true
+hourly_transaction_count_threshold = 20
+hourly_aggregate_volume_threshold = 50000.00
+single_transaction_quarantine_threshold = 500000.00
+high_risk_score_threshold = 75
+
+[netting]
+# Multilateral netting cycle optimization and participant margins
+netting_cycle_interval_seconds = 3600
+require_prefunded_collateral = true
+minimum_collateral_coverage_ratio = 1.00
+dynamic_bilateral_unwind_enabled = true
