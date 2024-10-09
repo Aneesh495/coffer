@@ -1,0 +1,50 @@
+name: Coffer Continuous Integration
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Verify Zero Em Dashes
+      run: |
+        make check-dashes
+
+    - name: Set up Clang and Compile Native C Acceleration Engine
+      run: |
+        sudo apt-get update && sudo apt-get install -y clang libpthread-stubs0-dev
+        make build-c
+        clang -O3 -Wall -Wextra c_src/fixedpoint/test_fixed_point.c bin/libcoffer_accel.a -o bin/test_fp
+        ./bin/test_fp
+        clang -O3 -Wall -Wextra c_src/netting/test_netting.c bin/libcoffer_accel.a -o bin/test_net
+        ./bin/test_net
+        clang -O3 -Wall -Wextra c_src/merkle/test_merkle.c bin/libcoffer_accel.a -o bin/test_merkle
+        ./bin/test_merkle
+
+    - name: Set up Ballerina Language Runtime
+      uses: ballerina-platform/setup-ballerina@v1
+      with:
+        version: 2201.10.0
+
+    - name: Execute Ballerina Test Harness
+      run: |
+        bal test
+
+    - name: Set up Python Environment
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Execute Python SDK and Simulator Test Matrix
+      run: |
+        PYTHONPATH=python python3 -m unittest discover -s python/tests -v
+        PYTHONPATH=python python3 python/simulator/bank_network_sim.py --transfers 100 --mock
+        PYTHONPATH=python python3 python/simulator/liquidity_stress_sim.py
